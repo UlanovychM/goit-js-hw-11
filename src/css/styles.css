@@ -5,6 +5,92 @@
   |============================
 */
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: currentColor;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  width: 1440px;
+}
+
+.index-item {
+  font-size: x-large;
+}
+
+.index-li:last-child {
+  margin-top: 20px;
+}
+.item {
+  background-color: #f6f6fe;
+  border-radius: 8px;
+
+  display: flex;
+  padding: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+
+  max-width: 400px;
+  max-height: 270px;
+  margin-top: 24px;
+}
+
+/* Gallery */
+
+.gallery {
+  display: flex;
+  padding: 24px 156px;
+
+  flex-wrap: wrap;
+
+  gap: 24px;
+}
+
+/* Img */
+
+.gallery-image {
+  width: 360px;
+  height: 200px;
+  transition: transform 0.2s;
+}
+
+.gallery-image:hover {
+  -webkit-transform: scale(1.075);
+  -ms-transform: scale(1.075);
+  transform: scale(1.075);
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
