@@ -77,6 +77,7 @@ form.addEventListener('submit', e => {
     .then(img => {
       spinner.style.display = 'none';
       if (img.hits.length !== 0) {
+        gallery.innerHTML = '';
         createGalleryImg(img.hits);
       } else {
         iziToast.error({
