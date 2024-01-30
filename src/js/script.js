@@ -1,8 +1,8 @@
 'use strict';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-// import iziToast from 'izitoast';
-// import 'izitoast/dist/css/iziToast.min.css';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('form');
 const gallery = document.querySelector('.gallery');
@@ -19,15 +19,12 @@ const optionsAPI = {
   orientation: 'horizontal',
   safesearch: true,
 };
-let { key, q, image_type } = optionsAPI;
-
-lightbox.on('show.simplelightbox');
-lightbox.refresh();
+let { key, q } = optionsAPI;
 
 function getApiData(value) {
   q = value.replace(' ', '+');
 
-  fetch(`https://pixabay.com/api/?key=${key}&q=${q}&${image_type}`)
+  fetch(`https://pixabay.com/api/?key=${key}&q=${q}`)
     .then(response => {
       if (!response.ok) {
         throw new Error(response.status);
@@ -35,24 +32,25 @@ function getApiData(value) {
       return response.json();
     })
     .then(img => {
-      const markup = img.hits
-        .map(img => {
-          const {
-            webformatURL,
-            largeImageURL,
-            tags,
-            likes,
-            views,
-            comments,
-            downloads,
-          } = img;
+      if (img.hits.length !== 0) {
+        const markup = img.hits
+          .map(img => {
+            const {
+              webformatURL,
+              largeImageURL,
+              tags,
+              likes,
+              views,
+              comments,
+              downloads,
+            } = img;
 
-          return `<li class="gallery-item">
-  <a class="gallery-link" href="">
+            return `<li class="gallery-item">
+  <a class="gallery-link" href="${largeImageURL}">
     <img
       class="gallery-image"
       src="${webformatURL}"
-      data-source="${largeImageURL}"
+      data-source=""
       alt="${tags}"
     />
 		
@@ -62,13 +60,22 @@ function getApiData(value) {
 	<p>Comments:${comments} </p>
 	<p>Downloads: ${downloads}</p>
 </li>`;
-        })
-        .join('');
+          })
+          .join('');
 
-      gallery.insertAdjacentHTML('afterbegin', markup);
-      document.querySelector('.gallery-link').addEventListener('click', e => {
-        e.preventDefault();
-      });
+        gallery.insertAdjacentHTML('afterbegin', markup);
+        document.querySelector('.gallery-link').addEventListener('click', e => {
+          e.preventDefault();
+        });
+        lightbox.refresh();
+        lightbox.on('show.simplelightbox');
+      } else {
+        iziToast.error({
+          position: 'topRight',
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+        });
+      }
     })
     .catch(error => console.log('Error:', error));
 }
