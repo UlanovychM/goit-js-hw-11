@@ -6,6 +6,7 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('form');
 const gallery = document.querySelector('.gallery');
+const spinner = document.querySelector('.loader');
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -21,31 +22,20 @@ const optionsAPI = {
 };
 let { key, q } = optionsAPI;
 
-function getApiData(value) {
-  q = value.replace(' ', '+');
+function createGalleryImg(value) {
+  const markup = value
+    .map(img => {
+      const {
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      } = img;
 
-  fetch(`https://pixabay.com/api/?key=${key}&q=${q}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
-    .then(img => {
-      if (img.hits.length !== 0) {
-        const markup = img.hits
-          .map(img => {
-            const {
-              webformatURL,
-              largeImageURL,
-              tags,
-              likes,
-              views,
-              comments,
-              downloads,
-            } = img;
-
-            return `<li class="gallery-item">
+      return `<li class="gallery-item">
   <a class="gallery-link" href="${largeImageURL}">
     <img
       class="gallery-image"
@@ -60,15 +50,34 @@ function getApiData(value) {
 	<p>Comments:${comments} </p>
 	<p>Downloads: ${downloads}</p>
 </li>`;
-          })
-          .join('');
+    })
+    .join('');
 
-        gallery.insertAdjacentHTML('afterbegin', markup);
-        document.querySelector('.gallery-link').addEventListener('click', e => {
-          e.preventDefault();
-        });
-        lightbox.refresh();
-        lightbox.on('show.simplelightbox');
+  gallery.insertAdjacentHTML('afterbegin', markup);
+  document.querySelector('.gallery-link').addEventListener('click', e => {
+    e.preventDefault();
+  });
+  lightbox.refresh();
+  lightbox.on('show.simplelightbox');
+}
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  spinner.style.display = 'inline-block';
+
+  q = e.target.elements.search.value.replace(' ', '+');
+
+  fetch(`https://pixabay.com/api/?key=${key}&q=${q}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
+      return response.json();
+    })
+    .then(img => {
+      spinner.style.display = 'none';
+      if (img.hits.length !== 0) {
+        createGalleryImg(img.hits);
       } else {
         iziToast.error({
           position: 'topRight',
@@ -77,11 +86,8 @@ function getApiData(value) {
         });
       }
     })
-    .catch(error => console.log('Error:', error));
-}
-
-form.addEventListener('submit', e => {
-  e.preventDefault();
-
-  getApiData(e.target.elements.search.value);
+    .catch(error => console.log('Error:', error))
+    .finally(() => {
+      form.reset();
+    });
 });
