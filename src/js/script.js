@@ -21,6 +21,9 @@ const optionsAPI = {
 };
 let { key, q, image_type } = optionsAPI;
 
+lightbox.on('show.simplelightbox');
+lightbox.refresh();
+
 function getApiData(value) {
   q = value.replace(' ', '+');
 
@@ -45,7 +48,7 @@ function getApiData(value) {
           } = img;
 
           return `<li class="gallery-item">
-  <a class="gallery-link" href="${downloads}">
+  <a class="gallery-link" href="">
     <img
       class="gallery-image"
       src="${webformatURL}"
@@ -57,13 +60,17 @@ function getApiData(value) {
 	<p>Likes: ${likes}</p>
 	<p>Views: ${views}</p>
 	<p>Comments:${comments} </p>
+	<p>Downloads: ${downloads}</p>
 </li>`;
         })
         .join('');
 
       gallery.insertAdjacentHTML('afterbegin', markup);
-      lightbox.on('show.simplelightbox');
-    });
+      document.querySelector('.gallery-link').addEventListener('click', e => {
+        e.preventDefault();
+      });
+    })
+    .catch(error => console.log('Error:', error));
 }
 
 form.addEventListener('submit', e => {
