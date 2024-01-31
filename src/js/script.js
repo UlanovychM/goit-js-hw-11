@@ -22,8 +22,8 @@ const optionsAPI = {
 };
 let { key, q } = optionsAPI;
 
-function createGalleryImg(value) {
-  const markup = value
+function createGalleryImg(arr) {
+  const markup = arr
     .map(img => {
       const {
         webformatURL,
@@ -45,10 +45,23 @@ function createGalleryImg(value) {
     />
 		
   </a>
-	<p>Likes: ${likes}</p>
-	<p>Views: ${views}</p>
-	<p>Comments:${comments} </p>
-	<p>Downloads: ${downloads}</p>
+  <ul class="image-info">
+    <li class="info-item">
+    <p>Likes</p>
+    ${likes}
+    </li>
+    <li class="info-item"><p>Views</p>
+    ${views}
+    </li>
+    <li class="info-item">
+    <p>Comments</p>
+    ${comments}
+    </li>
+    <li class="info-item"><p>Downloads</p>
+    ${downloads}
+    </li>
+  </ul> 
+	
 </li>`;
     })
     .join('');
@@ -87,8 +100,5 @@ form.addEventListener('submit', e => {
         });
       }
     })
-    .catch(error => console.log('Error:', error))
-    .finally(() => {
-      form.reset();
-    });
+    .catch(error => console.log('Error:', error));
 });
