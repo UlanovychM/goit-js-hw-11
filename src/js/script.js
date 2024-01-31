@@ -78,7 +78,7 @@ form.addEventListener('submit', e => {
   e.preventDefault();
   spinner.style.display = 'inline-block';
 
-  q = e.target.elements.search.value.replace(' ', '+');
+  q = e.target.elements.search.value;
 
   fetch(`https://pixabay.com/api/?key=${key}&q=${q}`)
     .then(response => {
