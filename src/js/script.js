@@ -22,7 +22,7 @@ const optionsAPI = {
 };
 let { key, q } = optionsAPI;
 
-function createGalleryImg(arr) {
+function renderGalleryImg(arr) {
   const markup = arr
     .map(img => {
       const {
@@ -71,15 +71,10 @@ function createGalleryImg(arr) {
     e.preventDefault();
   });
   lightbox.refresh();
-  lightbox.on('show.simplelightbox');
 }
 
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  spinner.style.display = 'inline-block';
-
-  q = e.target.elements.search.value;
-
+function getAPIDataValueStr(str) {
+  q = str.replace(' ', '+');
   fetch(`https://pixabay.com/api/?key=${key}&q=${q}`)
     .then(response => {
       if (!response.ok) {
@@ -89,9 +84,9 @@ form.addEventListener('submit', e => {
     })
     .then(img => {
       spinner.style.display = 'none';
+      gallery.innerHTML = '';
       if (img.hits.length !== 0) {
-        gallery.innerHTML = '';
-        createGalleryImg(img.hits);
+        renderGalleryImg(img.hits);
       } else {
         iziToast.error({
           position: 'topRight',
@@ -101,4 +96,14 @@ form.addEventListener('submit', e => {
       }
     })
     .catch(error => console.log('Error:', error));
+}
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  if (e.target.elements.search.value !== '') {
+    spinner.style.display = 'inline-block';
+
+    getAPIDataValueStr(e.target.elements.search.value);
+  }
 });
