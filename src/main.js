@@ -20,7 +20,6 @@ const optionsAPI = {
   orientation: 'horizontal',
   safesearch: true,
 };
-let { key, q } = optionsAPI;
 
 function renderGalleryImg(arr) {
   const markup = arr
@@ -74,8 +73,11 @@ function renderGalleryImg(arr) {
 }
 
 function getAPIDataValueStr(str) {
-  q = str.replace(' ', '+');
-  fetch(`https://pixabay.com/api/?key=${key}&q=${q}`)
+  optionsAPI.q = str.replace(/\\s+/g, '+');
+
+  const searchParams = new URLSearchParams(optionsAPI);
+
+  fetch(`https://pixabay.com/api/?${searchParams}`)
     .then(response => {
       if (!response.ok) {
         throw new Error(response.status);
